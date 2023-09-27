@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="pt_BR">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            overflow: hidden
+        }
+    </style>
+    <title>Tempo</title>
+</head>
+
+<body>
+    <div class="vw-100 vh-100" style="background-color: #f5f6f7">
+        <div class="card">
+            <div class="bg-image">
+                <img id="bg" src="images/primavera.jpg" class="card-img" style="opacity: 0.4" />
+            </div>
+            <div class="card-img-overlay">
+
+                <div class="d-flex align-items-center justify-content-between px-5">
+                    <div class="d-flex align-items-center">
+                        <i id="previsaoAgoraIco" class="bi bi-question" style="font-size: 12rem"></i>
+                        <div class="px-4">
+                            <strong id="previsaoAgora"></strong>
+                            <div>
+                                <strong class="display-1"><span id="temp">?</span>°</strong>
+                                <i id="tempD" class="bi bi-question" style="font-size: 1.5rem;margin-left:-15px"></i>
+                            </div>
+                            <div>
+                                Sensação térmica: <strong><span id="sens">?</span>°</strong>
+                                <i id="sensD" class="bi bi-question"></i>
+                            </div>
+                            <div>
+                                Qualidade do Ar: <span id="qualidadeAr">?</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column text-center">
+                        <i id="diri" class="bi-arrow-up" style="font-size: 4rem"></i>
+                        <p>
+                            <strong id="dir">?</strong><br />
+                            <i class="bi bi-wind"></i>
+                            <span id="vent">?</span> km/h
+                            <i id="ventD" class="bi bi-question"></i>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-around">
+                    <div id="hoje" class="d-flex p-2 align-items-center">
+                        <i id="hojeIco" class="bi bi-question" style="font-size: 6rem"></i>
+                        <div class="px-4">
+                            <div>Hoje</div>
+                            <div>
+                                <strong class="display-4"><span id="hojeTemp">?</span>°</strong>
+                                <span id="hojeAfter" style="margin-left:-15px">?</span>
+                            </div>
+                            <div id="hojeText">?</div>
+                        </div>
+                    </div>
+                    <div class="d-flex p-2 align-items-center">
+                        <i id="noiteIco" class="bi bi-question" style="font-size: 6rem"></i>
+                        <div class="px-4">
+                            <div>Hoje à noite</div>
+                            <div>
+                                <strong class="display-4"><span id="noiteTemp">?</span>°</strong>
+                                <span id="noiteAfter" style="margin-left:-15px">?</span>
+                            </div>
+                            <div id="noiteText">?</div>
+                        </div>
+                    </div>
+                    <div class="d-flex p-2 align-items-center">
+                        <i id="amanhaIco" class="bi bi-question" style="font-size: 6rem"></i>
+                        <div class="px-4">
+                            <div>Amanhã</div>
+                            <div>
+                                <strong class="display-4"><span id="amanhaMax">?</span>°</strong>
+                                <span style="margin-left:-15px">/ <span id="amanhaMin">?</span>°</span>
+                            </div>
+                            <div id="amanhaText">?</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+    <script>
+        function dir(id, d) {
+            var i = $(id).attr("class", "bi");
+            if (d > 0)
+                i.addClass("bi-arrow-up-short");
+            else if (d < 0)
+                i.addClass("bi-arrow-down-short");
+        }
+
+        function winddirection(d) {
+            let degrees = 0;
+            switch (d) {
+                case "N": degrees = 0; break;
+                case "NNE": degrees = 22.5; break;
+                case "NE": degrees = 45; break;
+                case "ENE": degrees = 67.5; break;
+                case "E": degrees = 90; break;
+                case "ESE": degrees = 112.5; break;
+                case "SE": degrees = 135; break;
+                case "SSE": degrees = 157.5; break;
+                case "S": degrees = 180; break;
+                case "SSW": degrees = 202.5; break;
+                case "SW": degrees = 225; break;
+                case "WSW": degrees = 247.5; break;
+                case "W": degrees = 270; break;
+                case "WNW": degrees = 292.5; break;
+                case "NW": degrees = 315; break;
+                case "NNW": degrees = 337.5; break;
+            }
+            $("#diri").css({ 'transform': 'rotate(' + degrees + 'deg)' });
+            $("#dir").text(d);
+        }
+
+        function getEstacao(data) {
+            const mes = data.getMonth();
+            const dia = data.getDate();
+            const datasTrocaEstacoes = [
+                { estacao: 'outono.jpg', mesInicio: 2, diaInicio: 21, mesFim: 5, diaFim: 20 },
+                { estacao: 'inverno.webp', mesInicio: 5, diaInicio: 21, mesFim: 8, diaFim: 22 },
+                { estacao: 'primavera.jpg', mesInicio: 8, diaInicio: 23, mesFim: 11, diaFim: 20 },
+                { estacao: 'verao.jpg', mesInicio: 11, diaInicio: 21, mesFim: 2, diaFim: 20 }
+            ];
+            for (const troca of datasTrocaEstacoes) {
+                if ((mes === troca.mesInicio && dia >= troca.diaInicio) ||
+                    (mes === troca.mesFim && dia <= troca.diaFim)) {
+                    return troca.estacao;
+                }
+            }
+        }
+
+        function setIco(el, ico) {
+            let ic = "";
+            switch (parseInt(ico)) {
+                case 1:
+                case 2: ic = "bi-sun"; break; // sol
+
+                case 3:
+                case 4:
+                case 5:
+                case 20:
+                case 21:
+                case 6: ic = "bi-cloud-sun"; break; // sol com nuvem
+
+                case 7:
+                case 8:
+                case 19: ic = "bi-cloud"; break; // nuvem
+
+                case 11: ic = "bi-cloud-fog"; break; // nevoa
+
+                case 12:
+                case 13:
+                case 14:
+                case 39:
+                case 40:
+                case 18: ic = "bi-cloud-drizzle"; break; // nuvem chuva
+
+                case 15:
+                case 16:
+                case 41:
+                case 42:
+                case 17: ic = "bi-cloud-lightning-rain"; break; // nuvem chuva raio
+
+                case 22:
+                case 25:
+                case 26:
+                case 29:
+                case 43:
+                case 44:
+                case 23: ic = "bi-cloud-snow"; break; // nuvem neve
+
+                case 24: ic = "bi-snow"; break; //neve
+
+                case 30: ic = "bi-thermometer-high"; break;
+                case 31: ic = "bi-thermometer-low"; break;
+
+                case 32: ic = "bi-wind"; break; // vento
+
+                case 33:
+                case 34: ic = "bi-moon"; break; // limpo
+
+                case 35:
+                case 36:
+                case 37:
+                case 38: ic = "cloud-moon"; break; // lua nuvem
+            }
+            $(el).attr("class", "bi").addClass(ic);
+        }
+
+        function updateScreen() {
+            var estacao = getEstacao(new Date());
+            $("#bg").attr("src", "images/" + estacao);
+
+            jQuery.get("data.json", data => {
+
+                $("#temp").text(data.temp);
+                $("#sens").text(data.sens);
+                $("#vent").text(data.vent);
+                dir("#tempD", data.tempD);
+                dir("#sensD", data.sensD);
+                dir("#ventD", data.ventD);
+                winddirection(data.dir);
+
+                $("#previsaoAgora").text(data.previsaoAgora);
+                setIco("#previsaoAgoraIco", data.previsaoAgoraIco);
+
+                $("#qualidadeAr").text(data.qualidadeAr).css("color", data.qualidadeArCor);
+
+                if (typeof data.previsaoHojeTemp == "undefined") {
+                    $("#hoje").addClass('d-none');
+                } else {
+                    $("#hojeTemp").text(data.previsaoHojeTemp);
+                    $("#hojeAfter").text(data.previsaoHojeTempAfter);
+                    $("#hojeText").text(data.previsaoHoje);
+                    setIco("#hojeIco", data.previsaoHojeIco);
+                    $("#hoje").removeClass('d-none');
+                }
+
+                $("#noiteTemp").text(data.previsaoNoiteTemp);
+                $("#noiteAfter").text(data.previsaoNoiteTempAfter);
+                $("#noiteText").text(data.previsaoNoite);
+                setIco("#noiteIco", data.previsaoNoiteIco);
+
+                $("#amanhaMin").text(data.previsaoAmanhaMin);
+                $("#amanhaMax").text(data.previsaoAmanhaMax);
+                $("#amanhaText").text(data.previsaoAmanha);
+                setIco("#amanhaIco", data.previsaoAmanhaIco);
+            }, "json");
+
+            setTimeout(updateScreen, 120000);
+        }
+
+        updateScreen();
+    </script>
+</body>
+
+</html>

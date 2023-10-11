@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const port = process.env.PORT || 3000
+const router = express.Router()
 
 const cheerio = require("cheerio");
 
@@ -109,7 +110,7 @@ function dir(vAnterior, vAtual, d) {
   return d
 }
 
-app.get('/data.json', async (req, res) => {
+router.get('/data.json', async (req, res) => {
   res.setHeader('Content-Type', 'application/json');
 
   let agora = await getInfo();
@@ -155,9 +156,12 @@ app.get('/data.json', async (req, res) => {
   res.send(data)
 })
 
-app.use(express.static('public'))
+const prefix = process.env.PREFIX || "/";
+
+app.use(prefix, express.static('public'));
+app.use(prefix, router);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Tempo listening on port ${port}`)
 })
 

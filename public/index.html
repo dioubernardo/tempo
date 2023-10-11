@@ -129,20 +129,17 @@
             $("#dir").text(d);
         }
 
-        function getEstacao(data) {
-            const mes = data.getMonth();
-            const dia = data.getDate();
-            const datasTrocaEstacoes = [
-                { estacao: 'outono.jpg', mesInicio: 2, diaInicio: 21, mesFim: 5, diaFim: 20 },
-                { estacao: 'inverno.webp', mesInicio: 5, diaInicio: 21, mesFim: 8, diaFim: 22 },
-                { estacao: 'primavera.jpg', mesInicio: 8, diaInicio: 23, mesFim: 11, diaFim: 20 },
-                { estacao: 'verao.jpg', mesInicio: 11, diaInicio: 21, mesFim: 2, diaFim: 20 }
-            ];
-            for (const troca of datasTrocaEstacoes) {
-                if ((mes === troca.mesInicio && dia >= troca.diaInicio) ||
-                    (mes === troca.mesFim && dia <= troca.diaFim)) {
-                    return troca.estacao;
-                }
+        function getEstacao(dataAtual) {
+            const mesAtual = dataAtual.getMonth() + 1;
+            const diaAtual = dataAtual.getDate();
+            if ((mesAtual === 12 && diaAtual >= 21) || (mesAtual >= 1 && mesAtual <= 2) || (mesAtual === 3 && diaAtual < 20)) {
+                return 'verao.jpg';
+            } else if ((mesAtual === 3 && diaAtual >= 20) || (mesAtual >= 4 && mesAtual <= 5) || (mesAtual === 6 && diaAtual < 21)) {
+                return 'outono.jpg';
+            } else if ((mesAtual === 6 && diaAtual >= 21) || (mesAtual >= 7 && mesAtual <= 8) || (mesAtual === 9 && diaAtual < 23)) {
+                return 'inverno.webp';
+            } else {
+                return 'primavera.jpg';
             }
         }
 

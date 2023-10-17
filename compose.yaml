@@ -1,0 +1,8 @@
+services:
+  tempo:
+    build: .
+    ports:
+      - "80:3000"
+    environment:
+      PORT: "3000"
+      PREFIX: "/tempo"

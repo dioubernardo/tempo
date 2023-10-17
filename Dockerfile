@@ -1,4 +1,4 @@
-FROM node:18.0-slim
+FROM node:slim
 COPY . .
 RUN npm install
 CMD [ "node", "server.js" ]
